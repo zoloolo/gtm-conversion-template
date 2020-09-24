@@ -1,5 +1,5 @@
 homepage: "https://weborama.com"
 documentation: "https://weborama.com"
 versions:
-  - sha: 3822da86948e0f71de3563681d75a199299f31e7
+  - sha: cf7d5655d14d6e2c10142060e538d1c388d6d09b
     changeNotes: Initial release
