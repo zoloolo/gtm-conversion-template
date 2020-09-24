@@ -14,6 +14,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "ConversionW",
+  "categories": ["CONVERSIONS", "ATTRIBUTION", "SALES"]
   "brand": {
     "id": "brand_dummy",
     "displayName": ""
