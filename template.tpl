@@ -13,11 +13,15 @@ ___INFO___
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
-  "displayName": "ConversionW",
-  "categories": ["CONVERSIONS", "ATTRIBUTION", "SALES"],
+  "displayName": "Weborama Conversion",
+  "categories": [
+    "CONVERSIONS",
+    "ATTRIBUTION",
+    "SALES"
+  ],
   "brand": {
     "id": "brand_dummy",
-    "displayName": ""
+    "displayName": "Weborama"
   },
   "description": "",
   "containerContexts": [
@@ -75,16 +79,17 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 log('data =', data);
 
-const sendPixel = require('sendPixel');
-const encodeUriComponent = require('encodeUriComponent');
+const encodeUri = require('encodeUri');
 const injectHiddenIframe = require('injectHiddenIframe');
+const generateRandom = require('generateRandom');
 
 const account = data.accountId;
 const page = data.conversionPageId;
-const host = data.accountHost;
+const host = encodeUri(data.accountHost);
+const rnd = generateRandom(1,1000000);
 //const revenue = data.revenue;
 
-const url = 'https://'+host + '/fcgi-bin/dispatch.fcgi?a.A=co&a.si=' + account + 'a.co=' + page;// + 'a.re='+revenue;
+const url = 'https://'+host + '/fcgi-bin/dispatch.fcgi?a.A=co&a.si=' + account + '&a.co=' + page + '&g.r=' + rnd;// + 'a.re='+revenue;
 
 //sendPixel(url);
 injectHiddenIframe(url);
@@ -107,39 +112,6 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 1,
             "string": "all"
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "send_pixel",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "allowedUrls",
-          "value": {
-            "type": 1,
-            "string": "specific"
-          }
-        },
-        {
-          "key": "urls",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 1,
-                "string": "https://*.solution.weborama.fr/fcgi-bin/*"
-              }
-            ]
           }
         }
       ]
@@ -180,11 +152,25 @@ ___WEB_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: Main test
+  code: |-
+    const mockData = {
+      // Mocked field values
+      accountId: 1,
+      conversionPageId: 1,
+      accountHost: 'test.solution.weborama.fr'
+    };
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
 
 
 ___NOTES___
 
-Created on 9/24/2020, 5:09:40 PM
+Created on 10/3/2020, 11:04:59 PM
 
 
