@@ -80,11 +80,12 @@ const log = require('logToConsole');
 log('data =', data);
 
 const encodeUri = require('encodeUri');
+const encodeUriComponent = require('encodeUriComponent');
 const injectHiddenIframe = require('injectHiddenIframe');
 const generateRandom = require('generateRandom');
 
-const account = data.accountId;
-const page = data.conversionPageId;
+const account = encodeUriComponent(data.accountId);
+const page = encodeUriComponent(data.conversionPageId);
 const host = encodeUri(data.accountHost);
 const rnd = generateRandom(1,1000000);
 //const revenue = data.revenue;
@@ -153,12 +154,12 @@ ___WEB_PERMISSIONS___
 ___TESTS___
 
 scenarios:
-- name: Main test
+- name: Standard test
   code: |-
     const mockData = {
       // Mocked field values
-      accountId: 1,
-      conversionPageId: 1,
+      accountId: '1',
+      conversionPageId: "1",
       accountHost: 'test.solution.weborama.fr'
     };
 
@@ -171,6 +172,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 10/3/2020, 11:04:59 PM
+Created on 10/9/2020, 10:09:24 PM
 
 
