@@ -1,6 +1,8 @@
 homepage: "https://weborama.com"
 documentation: "https://weborama.com"
 versions:
+  - sha: 1dbb1963c2b7d0b038da3fd48fb1552f29f830cb
+    changeNotes: Fix review issues (encode user's input)
   - sha: 21892d5aebdf304e21c7f5b5cd21fb4bceb08ec2
     changeNotes: Fix review issues
   - sha: 920f04c5d2ba042e73e9c4606a536def07234aa2
