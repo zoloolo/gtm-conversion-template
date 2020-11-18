@@ -9,21 +9,22 @@ Google may provide), as modified from time to time.
 ___INFO___
 
 {
-  "type": "TAG",
-  "id": "cvt_temp_public_id",
-  "version": 1,
-  "securityGroups": [],
   "displayName": "Weborama Conversion",
+  "description": "Tag template for creating Conversion for Weborama.",
+  "__wm": "VGVtcGxhdGUtQXV0aG9yX0FwcE5leHVzLVNpbW8tQWhhdmE\u003d",
+  "securityGroups": [],
   "categories": [
     "CONVERSIONS",
     "ATTRIBUTION",
     "SALES"
   ],
+  "id": "cvt_temp_public_id",
+  "type": "TAG",
+  "version": 1,
   "brand": {
-    "id": "brand_dummy",
-    "displayName": "Weborama"
+    "displayName": "Weborama",
+    "id": "brand_dummy"
   },
-  "description": "",
   "containerContexts": [
     "WEB"
   ]
@@ -36,9 +37,12 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "TEXT",
     "name": "accountId",
-    "displayName": "Account identifier",
+    "displayName": "Account ID",
     "simpleValueType": true,
     "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      },
       {
         "type": "POSITIVE_NUMBER"
       }
@@ -47,9 +51,12 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "TEXT",
     "name": "conversionPageId",
-    "displayName": "Conversion page identifier",
+    "displayName": "Conversion page ID",
     "simpleValueType": true,
     "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      },
       {
         "type": "POSITIVE_NUMBER"
       }
@@ -62,66 +69,35 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true,
     "valueValidators": [
       {
-        "type": "REGEX",
-        "args": [
-          "*.solution.weborama.fr"
-        ]
+        "type": "NON_EMPTY"
       }
     ],
-    "defaultValue": "wcm.solution.weborama.fr"
+    "defaultValue": "wcmgtm.solution.weborama.fr"
   }
 ]
 
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-// Enter your template code here.
-const log = require('logToConsole');
-log('data =', data);
-
 const encodeUri = require('encodeUri');
 const encodeUriComponent = require('encodeUriComponent');
 const injectHiddenIframe = require('injectHiddenIframe');
 const generateRandom = require('generateRandom');
 
-const account = encodeUriComponent(data.accountId);
-const page = encodeUriComponent(data.conversionPageId);
-const host = encodeUri(data.accountHost);
 const rnd = generateRandom(1,1000000);
-//const revenue = data.revenue;
 
-const url = 'https://'+host + '/fcgi-bin/dispatch.fcgi?a.A=co&a.si=' + account + '&a.co=' + page + '&g.r=' + rnd;// + 'a.re='+revenue;
+var acc = data.accountId?data.accountId+"":"0";
+var pge = data.conversionPageId?data.conversionPageId+"":"0";
+var hst = data.accountHost?data.accountHost+"":"wcmgtm.solution.weborama.fr";
 
-//sendPixel(url);
-injectHiddenIframe(url);
-// Call data.gtmOnSuccess when the tag is finished.
-data.gtmOnSuccess();
+const url = 'https://'+encodeUriComponent(hst)+'/fcgi-bin/dispatch.fcgi?a.A=co&a.si='+encodeUriComponent(acc)+'&a.co=' + encodeUriComponent(pge)+'&g.r=' + rnd;
+
+injectHiddenIframe(url, data.gtmOnSuccess);
 
 
 ___WEB_PERMISSIONS___
 
 [
-  {
-    "instance": {
-      "key": {
-        "publicId": "logging",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "environments",
-          "value": {
-            "type": 1,
-            "string": "all"
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
   {
     "instance": {
       "key": {
@@ -153,25 +129,11 @@ ___WEB_PERMISSIONS___
 
 ___TESTS___
 
-scenarios:
-- name: Standard test
-  code: |-
-    const mockData = {
-      // Mocked field values
-      accountId: '1',
-      conversionPageId: "1",
-      accountHost: 'test.solution.weborama.fr'
-    };
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
+scenarios: []
 
 
 ___NOTES___
 
-Created on 10/9/2020, 10:09:24 PM
+Created on 05/07/2019, 10:21:41
 
 
