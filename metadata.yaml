@@ -1,6 +1,8 @@
 homepage: "https://weborama.com"
 documentation: "https://weborama.com"
 versions:
+  - sha: 2c16d5eb8309b5054d26362aeb64e270a2e2fe79
+    changeNotes: Add all possible variables and switch to JS (instead of iframe)
   - sha: 683bff1fb24d37c4dce60d0238c5760a9789e9c7
     changeNotes: Fix error in console
   - sha: 1dbb1963c2b7d0b038da3fd48fb1552f29f830cb
