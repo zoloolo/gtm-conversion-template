@@ -10,7 +10,7 @@ ___INFO___
 
 {
   "displayName": "Weborama Conversion",
-  "description": "Tag template for creating Conversion for Weborama.",
+  "description": "This is the official Google Tag Manager conversion template for Weborama.",
   "__wm": "VGVtcGxhdGUtQXV0aG9yX0FwcE5leHVzLVNpbW8tQWhhdmE\u003d",
   "securityGroups": [],
   "categories": [
@@ -35,64 +35,148 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
-    "type": "TEXT",
-    "name": "accountId",
-    "displayName": "Account ID",
-    "simpleValueType": true,
-    "valueValidators": [
+    "type": "GROUP",
+    "name": "requiredProperties",
+    "displayName": "Mandatory properties:",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
       {
-        "type": "NON_EMPTY"
+        "help": "Set site or site id here.",
+        "displayName": "Site id (si)",
+        "simpleValueType": true,
+        "name": "accountId",
+        "type": "TEXT",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
       },
       {
-        "type": "POSITIVE_NUMBER"
+        "help": "Set full host (host) page here.",
+        "displayName": "fullhost",
+        "simpleValueType": true,
+        "name": "accountHost",
+        "type": "TEXT",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
+      },
+      {
+        "help": "Set conversion page number here.",
+        "displayName": "conversion page (cp)",
+        "simpleValueType": true,
+        "name": "conversionPageId",
+        "type": "TEXT",
+        "valueValidators": []
       }
     ]
   },
   {
-    "type": "TEXT",
-    "name": "conversionPageId",
-    "displayName": "Conversion page ID",
-    "simpleValueType": true,
-    "valueValidators": [
+    "type": "GROUP",
+    "name": "optionalProperties",
+    "displayName": "Optional parameters:",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
       {
-        "type": "NON_EMPTY"
+        "help": "Set the total price here.",
+        "displayName": "revenue (re)",
+        "simpleValueType": true,
+        "name": "revenue",
+        "type": "TEXT",
+        "valueValidators": []
       },
       {
-        "type": "POSITIVE_NUMBER"
+        "help": "Set your invoice id here",
+        "displayName": "invoice identifier (iid)",
+        "simpleValueType": true,
+        "name": "invoiceId",
+        "type": "TEXT",
+        "valueValidators": []
+      },
+      {
+        "help": "Set the number of items purchased.",
+        "displayName": "Items number (inu)",
+        "simpleValueType": true,
+        "name": "itemsNumber",
+        "type": "TEXT",
+        "valueValidators": []
+      },
+      {
+        "help": "Set your client id here.",
+        "displayName": "client identifier (cid)",
+        "simpleValueType": true,
+        "name": "clientId",
+        "type": "TEXT",
+        "valueValidators": []
+      },
+      {
+        "help": "Set to 1 if the client is a new client.",
+        "displayName": "is client (isc)",
+        "simpleValueType": true,
+        "name": "isClient",
+        "type": "TEXT",
+        "valueValidators": []
+      },
+      {
+        "help": "Set an object with extra data.",
+        "displayName": "optional parameters (opt)",
+        "simpleValueType": true,
+        "name": "optionalParameters",
+        "type": "TEXT",
+        "valueValidators": []
       }
     ]
-  },
-  {
-    "type": "TEXT",
-    "name": "accountHost",
-    "displayName": "Collect host of the account",
-    "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ],
-    "defaultValue": "wcmgtm.solution.weborama.fr"
   }
 ]
 
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-const encodeUri = require('encodeUri');
-const encodeUriComponent = require('encodeUriComponent');
-const injectHiddenIframe = require('injectHiddenIframe');
-const generateRandom = require('generateRandom');
+const logToConsole = require('logToConsole');
+const injectScript = require('injectScript');
+const callInWindow = require('callInWindow');
+const makeInteger = require('makeInteger');
 
-const rnd = generateRandom(1,1000000);
+logToConsole('data sent:', data);
 
-var acc = data.accountId?data.accountId+"":"0";
-var pge = data.conversionPageId?data.conversionPageId+"":"0";
-var hst = data.accountHost?data.accountHost+"":"wcmgtm.solution.weborama.fr";
+const trackingUrl = 'https://cstatic.weborama.fr/js/advertiserv2/adperf_conversion.js';
 
-const url = 'https://'+encodeUriComponent(hst)+'/fcgi-bin/dispatch.fcgi?a.A=co&a.si='+encodeUriComponent(acc)+'&a.co=' + encodeUriComponent(pge)+'&g.r=' + rnd;
+const accountId = data.accountId;
+const revenue = data.revenue;
+const clientId = data.clientId;
+const fullHost = data.accountHost;
+const itemsNumber = data.itemsNumber;
+const invoiceId = data.invoiceId;
+const conversionPageId = data.conversionPageId;
+const optionalParameters = data.optionalParameters;
+var isClient = data.isClient;
 
-injectHiddenIframe(url, data.gtmOnSuccess);
+if (makeInteger(isClient) > 0) {
+  isClient = 1;
+} else   {
+  isClient = 0;
+}
+
+function sendConversion() {
+  const adperftrackobj = {
+    site : accountId,
+    fullhost: fullHost,
+    conversion_page: conversionPageId,
+    client: clientId,
+    is_client: isClient,
+    amount: revenue,
+    invoice_id: invoiceId,
+    quantity:itemsNumber,
+    optional_parameters: optionalParameters
+  };
+  callInWindow('adperfTracker.track', adperftrackobj);
+  data.gtmOnSuccess();
+}
+
+injectScript(trackingUrl, sendConversion, data.gtmOnFailure, 'weborama_conversion');
 
 
 ___WEB_PERMISSIONS___
@@ -101,7 +185,25 @@ ___WEB_PERMISSIONS___
   {
     "instance": {
       "key": {
-        "publicId": "inject_hidden_iframe",
+        "publicId": "logging",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "environments",
+          "value": {
+            "type": 1,
+            "string": "debug"
+          }
+        }
+      ]
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "inject_script",
         "versionId": "1"
       },
       "param": [
@@ -112,7 +214,68 @@ ___WEB_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://*.solution.weborama.fr/fcgi-bin/*"
+                "string": "https://cstatic.weborama.fr/"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_globals",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keys",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "adperfTracker.track"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
               }
             ]
           }
