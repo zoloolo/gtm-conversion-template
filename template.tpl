@@ -1,13 +1,13 @@
-﻿___TERMS_OF_SERVICE___
-
+___TERMS_OF_SERVICE___
+​
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
 https://developers.google.com/tag-manager/gallery-tos (or such other URL as
 Google may provide), as modified from time to time.
-
-
+​
+​
 ___INFO___
-
+​
 {
   "displayName": "Weborama Conversion",
   "description": "This is the official Google Tag Manager conversion template for Weborama.",
@@ -29,10 +29,10 @@ ___INFO___
     "WEB"
   ]
 }
-
-
+​
+​
 ___TEMPLATE_PARAMETERS___
-
+​
 [
   {
     "type": "GROUP",
@@ -126,24 +126,25 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "name": "optionalParameters",
         "type": "TEXT",
-        "valueValidators": []
+        "valueValidators": [],
+        "textAsList": false
       }
     ]
   }
 ]
-
-
+​
+​
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
-
+​
 const logToConsole = require('logToConsole');
 const injectScript = require('injectScript');
 const callInWindow = require('callInWindow');
 const makeInteger = require('makeInteger');
-
+​
 logToConsole('data sent:', data);
-
+​
 const trackingUrl = 'https://cstatic.weborama.fr/js/advertiserv2/adperf_conversion.js';
-
+​
 const accountId = data.accountId;
 const revenue = data.revenue;
 const clientId = data.clientId;
@@ -153,13 +154,13 @@ const invoiceId = data.invoiceId;
 const conversionPageId = data.conversionPageId;
 const optionalParameters = data.optionalParameters;
 var isClient = data.isClient;
-
+​
 if (makeInteger(isClient) > 0) {
   isClient = 1;
 } else   {
   isClient = 0;
 }
-
+​
 function sendConversion() {
   const adperftrackobj = {
     site : accountId,
@@ -175,12 +176,12 @@ function sendConversion() {
   callInWindow('adperfTracker.track', adperftrackobj);
   data.gtmOnSuccess();
 }
-
+​
 injectScript(trackingUrl, sendConversion, data.gtmOnFailure, 'weborama_conversion');
-
-
+​
+​
 ___WEB_PERMISSIONS___
-
+​
 [
   {
     "instance": {
@@ -288,15 +289,14 @@ ___WEB_PERMISSIONS___
     "isRequired": true
   }
 ]
-
-
+​
+​
 ___TESTS___
-
+​
 scenarios: []
-
-
+​
+​
 ___NOTES___
-
+​
 Created on 05/07/2019, 10:21:41
-
 
