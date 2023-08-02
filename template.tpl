@@ -143,7 +143,7 @@ const makeInteger = require('makeInteger');
 ​
 logToConsole('data sent:', data);
 ​
-const trackingUrl = 'https://cstatic.weborama.fr/js/advertiserv2/adperf_conversion.js';
+const trackingUrl = 'https://cstatic.weborama-tech.ru/js/advertiserv2/adperf_conversion.js';
 ​
 const accountId = data.accountId;
 const revenue = data.revenue;
@@ -215,7 +215,7 @@ ___WEB_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://cstatic.weborama.fr/"
+                "string": "https://cstatic.weborama-tech.ru/"
               }
             ]
           }
